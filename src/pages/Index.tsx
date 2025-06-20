@@ -510,7 +510,7 @@ const slides = [
                   <h4 className="font-semibold text-yellow-700 mb-2">Влияние выбросов</h4>
                   <p className="text-sm">Экстремальные значения сильно искажают метрики</p>
                   <div className="text-xs text-gray-600 mt-2">
-                    Один клиент с uplift 10000₽ >> 100 клиентов с uplift 50₽
+                    Один клиент с uplift 10000₽ {'>>'} 100 клиентов с uplift 50₽
                   </div>
                 </div>
               </div>
