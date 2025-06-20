@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BarChart3, TrendingUp, Users, Target, Brain, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BarChart3, TrendingUp, Users, Target, Brain, AlertTriangle, ArrowRight, Zap } from 'lucide-react';
 
 const slides = [
   {
@@ -16,21 +16,25 @@ const slides = [
           <h2 className="text-3xl font-bold mb-2">Uplift Modeling</h2>
           <p className="text-xl">Оценка причинно-следственных эффектов в регрессионных задачах</p>
         </div>
-        <div className="grid grid-cols-3 gap-6 mt-8">
-          <div className="bg-blue-50 p-6 rounded-lg">
-            <Users className="w-8 h-8 text-blue-600 mb-2" />
-            <h3 className="font-semibold">Контрольная группа</h3>
-            <p className="text-sm text-gray-600">T = 0</p>
+        
+        <div className="grid grid-cols-2 gap-8">
+          <div className="bg-blue-50 p-6 rounded-xl">
+            <h3 className="text-xl font-bold text-blue-800 mb-4">Классический Uplift</h3>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>Бинарный таргет (1/0)</li>
+              <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>Рандомизированные кампании</li>
+              <li className="flex items-center"><span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>Uplift@k, AUUC, Qini с нормировкой</li>
+            </ul>
           </div>
-          <div className="bg-green-50 p-6 rounded-lg">
-            <Target className="w-8 h-8 text-green-600 mb-2" />
-            <h3 className="font-semibold">Тестовая группа</h3>
-            <p className="text-sm text-gray-600">T = 1</p>
-          </div>
-          <div className="bg-purple-50 p-6 rounded-lg">
-            <Brain className="w-8 h-8 text-purple-600 mb-2" />
-            <h3 className="font-semibold">Uplift Effect</h3>
-            <p className="text-sm text-gray-600">Δ = E[Y|T=1] - E[Y|T=0]</p>
+          
+          <div className="bg-green-50 p-6 rounded-xl">
+            <h3 className="text-xl font-bold text-green-800 mb-4">Регрессионный Uplift</h3>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>Вещественный таргет (сумма покупки)</li>
+              <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>Флаг покупки отдельно</li>
+              <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>Нет рандомизации</li>
+              <li className="flex items-center"><span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>Метрики без нормировки</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -38,198 +42,211 @@ const slides = [
   },
   {
     id: 2,
-    title: "Основная проблематика",
-    subtitle: "Фундаментальная проблема каузального вывода",
+    title: "Основные проблемы регрессионного uplift",
+    subtitle: "Вызовы, отличающие от классического подхода",
     content: (
       <div className="space-y-6">
-        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
-          <div className="flex items-center mb-3">
-            <AlertTriangle className="w-6 h-6 text-red-500 mr-2" />
-            <h3 className="font-bold text-red-700">Fundamental Problem of Causal Inference</h3>
-          </div>
-          <p className="text-red-700">Невозможно одновременно наблюдать результат для одного объекта в двух состояниях</p>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-8">
-          <div className="bg-white p-6 border rounded-lg shadow-sm">
-            <h4 className="font-semibold mb-4 text-gray-800">Наблюдаемые данные:</h4>
-            <div className="space-y-3">
-              <div className="bg-blue-100 p-3 rounded">
-                <code className="text-sm">Y(T=0) - наблюдаемо для контрольной группы</code>
-              </div>
-              <div className="bg-green-100 p-3 rounded">
-                <code className="text-sm">Y(T=1) - наблюдаемо для тестовой группы</code>
-              </div>
+        <div className="grid grid-cols-1 gap-6">
+          <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+            <div className="flex items-center mb-3">
+              <AlertTriangle className="w-6 h-6 text-red-500 mr-2" />
+              <h3 className="font-bold text-red-700">1. Зависимость метрик от датасета</h3>
             </div>
+            <p className="text-red-700">Без нормировки сложно сравнивать результаты между разными наборами данных</p>
           </div>
           
-          <div className="bg-white p-6 border rounded-lg shadow-sm">
-            <h4 className="font-semibold mb-4 text-gray-800">Ненаблюдаемые контрфакты:</h4>
-            <div className="space-y-3">
-              <div className="bg-gray-200 p-3 rounded">
-                <code className="text-sm">Y(T=1) - для контрольной группы</code>
-              </div>
-              <div className="bg-gray-200 p-3 rounded">
-                <code className="text-sm">Y(T=0) - для тестовой группы</code>
-              </div>
+          <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
+            <div className="flex items-center mb-3">
+              <AlertTriangle className="w-6 h-6 text-orange-500 mr-2" />
+              <h3 className="font-bold text-orange-700">2. Семплирование контрольной группы (T=0)</h3>
             </div>
+            <p className="text-orange-700">При создании синтетической контрольной группы модель может переобучиться на особенностях данных</p>
+          </div>
+          
+          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+            <div className="flex items-center mb-3">
+              <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
+              <h3 className="font-bold text-yellow-700">3. Подходы к моделированию</h3>
+            </div>
+            <p className="text-yellow-700">Классические meta-learners требуют адаптации для работы с вещественными таргетами</p>
           </div>
         </div>
         
-        <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
-          <h4 className="font-semibold text-yellow-800 mb-2">Индивидуальный Treatment Effect (ITE):</h4>
-          <div className="text-center">
-            <code className="text-lg bg-yellow-100 px-4 py-2 rounded font-mono">
-              τᵢ = Y₁ᵢ - Y₀ᵢ
-            </code>
+        <div className="bg-gray-100 p-6 rounded-lg">
+          <h3 className="font-semibold mb-4">Структура данных в регрессионном uplift:</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white p-4 rounded border">
+              <h4 className="font-medium text-blue-600 mb-2">Тестовая группа</h4>
+              <code className="text-sm">X_data_test, Y_test</code>
+              <p className="text-xs text-gray-600 mt-1">Получили воздействие</p>
+            </div>
+            <div className="bg-white p-4 rounded border">
+              <h4 className="font-medium text-green-600 mb-2">Контрольная группа</h4>
+              <code className="text-sm">X_data_control, Y_control</code>
+              <p className="text-xs text-gray-600 mt-1">Без воздействия</p>
+            </div>
           </div>
-          <p className="text-sm text-yellow-700 mt-2 text-center">где Y₁ᵢ и Y₀ᵢ никогда не наблюдаются одновременно</p>
         </div>
       </div>
     )
   },
   {
     id: 3,
-    title: "Математическая формулировка",
-    subtitle: "Модели и оценки эффектов",
+    title: "X-learner для регрессионного uplift",
+    subtitle: "Детальный алгоритм решения проблем",
     content: (
       <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
-          <Card>
+        <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 rounded-xl mb-6">
+          <h3 className="text-2xl font-bold mb-2">X-learner Algorithm</h3>
+          <p>Четырёхэтапный процесс для оценки индивидуальных эффектов</p>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-6">
+          <Card className="border-l-4 border-blue-500">
             <CardHeader>
-              <CardTitle className="text-lg">Модель 1: Прямое моделирование</CardTitle>
+              <CardTitle className="flex items-center text-blue-700">
+                <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">1</span>
+                Обучение базовых моделей
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="bg-blue-50 p-3 rounded">
-                  <code>E[Y | T=0] = μ₀(X)</code>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">MODEL1 (Контрольная)</h4>
+                  <code className="text-sm bg-white p-2 rounded block">
+                    X_data_control(T=0) → MODEL1 → Y_control
+                  </code>
+                  <p className="text-xs text-gray-600 mt-2">Предсказывает результат без воздействия</p>
                 </div>
-                <div className="bg-green-50 p-3 rounded">
-                  <code>E[Y | T=1] = μ₁(X)</code>
-                </div>
-                <div className="bg-purple-50 p-3 rounded font-semibold">
-                  <code>τ(X) = μ₁(X) - μ₀(X)</code>
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">MODEL2 (Тестовая)</h4>
+                  <code className="text-sm bg-white p-2 rounded block">
+                    X_data_test(T=1) → MODEL2 → Y_test
+                  </code>
+                  <p className="text-xs text-gray-600 mt-2">Предсказывает результат с воздействием</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-l-4 border-green-500">
             <CardHeader>
-              <CardTitle className="text-lg">Модель 2: Meta-learners</CardTitle>
+              <CardTitle className="flex items-center text-green-700">
+                <span className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">2</span>
+                Вычисление псевдо-эффектов
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="text-sm">
-                  <strong>T-learner:</strong>
-                  <div className="mt-1 space-y-1">
-                    <div className="bg-blue-50 p-2 rounded text-xs">
-                      <code>μ₀ = train_on(X[T=0], Y[T=0])</code>
-                    </div>
-                    <div className="bg-green-50 p-2 rounded text-xs">
-                      <code>μ₁ = train_on(X[T=1], Y[T=1])</code>
-                    </div>
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Delta0 (для тестовой группы)</h4>
+                  <code className="text-sm bg-white p-2 rounded block">
+                    delta0 = Y_test - MODEL1.predict(X_data_test)
+                  </code>
+                  <p className="text-xs text-gray-600 mt-2">Разность между фактом и контрфактом</p>
                 </div>
-                <div className="text-sm">
-                  <strong>S-learner:</strong>
-                  <div className="bg-gray-50 p-2 rounded text-xs mt-1">
-                    <code>μ = train_on([X,T], Y)</code>
-                  </div>
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Delta1 (для контрольной группы)</h4>
+                  <code className="text-sm bg-white p-2 rounded block">
+                    delta1 = MODEL2.predict(X_data_control) - Y_control
+                  </code>
+                  <p className="text-xs text-gray-600 mt-2">Разность между контрфактом и фактом</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+          
+          <Card className="border-l-4 border-purple-500">
+            <CardHeader>
+              <CardTitle className="flex items-center text-purple-700">
+                <span className="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">3</span>
+                Обучение uplift моделей
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-yellow-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">MODEL3 (для delta0)</h4>
+                  <code className="text-sm bg-white p-2 rounded block">
+                    X_data_test → MODEL3 → delta0
+                  </code>
+                </div>
+                <div className="bg-pink-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">MODEL4 (для delta1)</h4>
+                  <code className="text-sm bg-white p-2 rounded block">
+                    X_data_control → MODEL4 → delta1
+                  </code>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-l-4 border-red-500">
+            <CardHeader>
+              <CardTitle className="flex items-center text-red-700">
+                <span className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">4</span>
+                Финальная оценка uplift
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <code className="text-lg bg-white px-4 py-2 rounded font-mono">
+                  τ(X) = g(X) * MODEL3.predict(X) + (1-g(X)) * MODEL4.predict(X)
+                </code>
+                <p className="text-sm text-gray-600 mt-2">где g(X) - весовая функция (например, propensity score)</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Проблемы оценки качества</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-red-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-red-700 mb-2">Selection Bias</h4>
-                <p className="text-sm">Нерандомизированное назначение treatment'а</p>
-              </div>
-              <div className="bg-orange-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-700 mb-2">Confounding</h4>
-                <p className="text-sm">Скрытые переменные влияют на T и Y</p>
-              </div>
-              <div className="bg-yellow-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-yellow-700 mb-2">Evaluation</h4>
-                <p className="text-sm">Отсутствие ground truth для τ(X)</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     )
   },
   {
     id: 4,
-    title: "Специфика регрессионных задач",
-    subtitle: "Особенности непрерывных целевых переменных",
+    title: "Математическая формулировка X-learner",
+    subtitle: "Теоретическое обоснование подхода",
     content: (
       <div className="space-y-6">
+        <div className="bg-blue-50 p-6 rounded-lg">
+          <h3 className="text-xl font-bold mb-4">Основная идея X-learner</h3>
+          <p className="text-gray-700">
+            X-learner использует информацию из обеих групп для лучшей оценки контрфактических результатов, 
+            особенно эффективен при дисбалансе размеров групп.
+          </p>
+        </div>
+        
         <div className="grid grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <BarChart3 className="w-5 h-5 mr-2" />
-                Вызовы в регрессии
-              </CardTitle>
+              <CardTitle>Этап 1: Базовые предсказания</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <div>
-                    <strong>Гетероскедастичность:</strong>
-                    <p className="text-sm text-gray-600">Различная дисперсия в группах</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <div>
-                    <strong>Нелинейные эффекты:</strong>
-                    <p className="text-sm text-gray-600">τ(X) может быть сложной функцией</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <div>
-                    <strong>Выбросы:</strong>
-                    <p className="text-sm text-gray-600">Сильное влияние на оценки</p>
-                  </div>
-                </li>
-              </ul>
+              <div className="space-y-3">
+                <div className="bg-blue-50 p-3 rounded">
+                  <code>μ₀(x) = E[Y(0)|X=x]</code>
+                  <div className="text-xs text-gray-600 mt-1">MODEL1 на контрольной группе</div>
+                </div>
+                <div className="bg-green-50 p-3 rounded">
+                  <code>μ₁(x) = E[Y(1)|X=x]</code>
+                  <div className="text-xs text-gray-600 mt-1">MODEL2 на тестовой группе</div>
+                </div>
+              </div>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader>
-              <CardTitle>Метрики качества</CardTitle>
+              <CardTitle>Этап 2: Псевдо-outcomes</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <strong>RMSE on uplift:</strong>
-                  <div className="mt-1 font-mono text-sm">
-                    √(E[(τ̂(X) - τ(X))²])
-                  </div>
+              <div className="space-y-3">
+                <div className="bg-orange-50 p-3 rounded">
+                  <code>D₀ᵢ = Yᵢ - μ̂₀(Xᵢ)</code>
+                  <div className="text-xs text-gray-600 mt-1">для тестовой группы (T=1)</div>
                 </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <strong>Rank correlation:</strong>
-                  <div className="mt-1 text-sm">
-                    Качество ранжирования по uplift
-                  </div>
-                </div>
-                <div className="bg-purple-50 p-3 rounded-lg">
-                  <strong>Policy value:</strong>
-                  <div className="mt-1 text-sm">
-                    Ожидаемое улучшение от стратегии
-                  </div>
+                <div className="bg-purple-50 p-3 rounded">
+                  <code>D₁ᵢ = μ̂₁(Xᵢ) - Yᵢ</code>
+                  <div className="text-xs text-gray-600 mt-1">для контрольной группы (T=0)</div>
                 </div>
               </div>
             </CardContent>
@@ -238,26 +255,42 @@ const slides = [
         
         <Card>
           <CardHeader>
-            <CardTitle>Пример: Маркетинговая кампания</CardTitle>
+            <CardTitle>Этап 3: Uplift модели</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">Y</div>
-                  <div className="text-sm">Выручка от клиента (₽)</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-600">T</div>
-                  <div className="text-sm">Получение купона (0/1)</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">τ(X)</div>
-                  <div className="text-sm">Прирост выручки от купона</div>
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-yellow-50 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">τ̂₀(x)</h4>
+                <p className="text-sm">Модель для предсказания D₀ на признаках тестовой группы</p>
+                <code className="text-xs bg-white p-1 rounded mt-1 block">MODEL3: X_test → D₀</code>
               </div>
-              <div className="mt-4 text-center text-sm text-gray-600">
-                Цель: определить клиентов с максимальным ожидаемым приростом выручки
+              <div className="bg-pink-50 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">τ̂₁(x)</h4>
+                <p className="text-sm">Модель для предсказания D₁ на признаках контрольной группы</p>
+                <code className="text-xs bg-white p-1 rounded mt-1 block">MODEL4: X_control → D₁</code>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Этап 4: Комбинирование оценок</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-center mb-4">
+                <code className="text-lg bg-white px-4 py-2 rounded font-mono">
+                  τ(x) = g(x) · τ̂₀(x) + (1-g(x)) · τ̂₁(x)
+                </code>
+              </div>
+              <div className="text-sm text-gray-600">
+                <p><strong>g(x)</strong> - весовая функция, часто используется:</p>
+                <ul className="mt-2 space-y-1">
+                  <li>• Propensity score: e(x) = P(T=1|X=x)</li>
+                  <li>• Размер групп: n₁/(n₀+n₁)</li>
+                  <li>• Константа 0.5 для простоты</li>
+                </ul>
               </div>
             </div>
           </CardContent>
@@ -267,28 +300,185 @@ const slides = [
   },
   {
     id: 5,
-    title: "Современные подходы и решения",
-    subtitle: "Методы борьбы с основными проблемами",
+    title: "Преимущества X-learner для регрессии",
+    subtitle: "Почему X-learner эффективен в регрессионных задачах",
     content: (
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
+          <Card className="border-l-4 border-green-500">
+            <CardHeader>
+              <CardTitle className="text-green-700">✓ Преимущества</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <Zap className="w-4 h-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Использует всю информацию:</strong>
+                    <p className="text-sm text-gray-600">Каждая группа помогает предсказать контрфакт для другой</p>
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <Zap className="w-4 h-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Робустность к дисбалансу:</strong>
+                    <p className="text-sm text-gray-600">Хорошо работает при разных размерах групп</p>
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <Zap className="w-4 h-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Гибкость моделирования:</strong>
+                    <p className="text-sm text-gray-600">Можно использовать разные алгоритмы для каждого этапа</p>
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <Zap className="w-4 h-4 text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Лучше для регрессии:</strong>
+                    <p className="text-sm text-gray-600">Эффективно обрабатывает непрерывные таргеты</p>
+                  </div>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-l-4 border-orange-500">
+            <CardHeader>
+              <CardTitle className="text-orange-700">⚠ Ограничения</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <AlertTriangle className="w-4 h-4 text-orange-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Сложность реализации:</strong>
+                    <p className="text-sm text-gray-600">Требует обучения 4 моделей</p>
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <AlertTriangle className="w-4 h-4 text-orange-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Выбор весовой функции:</strong>
+                    <p className="text-sm text-gray-600">g(x) критически влияет на результат</p>
+                  </div>
+                </li>
+                <li className="flex items-start">
+                  <AlertTriangle className="w-4 h-4 text-orange-500 mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <strong>Накопление ошибок:</strong>
+                    <p className="text-sm text-gray-600">Ошибки моделей могут аккумулироваться</p>
+                  </div>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Сравнение с другими Meta-learners</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">Метод</th>
+                    <th className="text-left p-2">Модели</th>
+                    <th className="text-left p-2">Дисбаланс групп</th>
+                    <th className="text-left p-2">Регрессия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-2 font-medium">T-learner</td>
+                    <td className="p-2">2</td>
+                    <td className="p-2 text-orange-600">Проблемы</td>
+                    <td className="p-2 text-green-600">Хорошо</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2 font-medium">S-learner</td>
+                    <td className="p-2">1</td>
+                    <td className="p-2 text-green-600">Ок</td>
+                    <td className="p-2 text-orange-600">Средне</td>
+                  </tr>
+                  <tr className="border-b bg-blue-50">
+                    <td className="p-2 font-medium">X-learner</td>
+                    <td className="p-2">4</td>
+                    <td className="p-2 text-green-600">Отлично</td>
+                    <td className="p-2 text-green-600">Отлично</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <div className="bg-blue-50 p-6 rounded-lg">
+          <h3 className="font-semibold mb-3">Практические рекомендации:</h3>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <h4 className="font-medium mb-2">Для MODEL1 и MODEL2:</h4>
+              <ul className="space-y-1">
+                <li>• Gradient Boosting (XGBoost, LightGBM)</li>
+                <li>• Random Forest</li>
+                <li>• Neural Networks</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Для MODEL3 и MODEL4:</h4>
+              <ul className="space-y-1">
+                <li>• Регрессионные модели</li>
+                <li>• Регуляризация (Ridge, Lasso)</li>
+                <li>• Cross-validation для гиперпараметров</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 6,
+    title: "Метрики оценки качества",
+    subtitle: "Специфика метрик для регрессионного uplift",
+    content: (
+      <div className="space-y-6">
+        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+          <h3 className="font-bold text-yellow-800 mb-2">Ключевая проблема:</h3>
+          <p className="text-yellow-700">В регрессионном uplift метрики не нормализуются, что делает их зависимыми от масштаба данных</p>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Causal ML подходы</CardTitle>
+              <CardTitle>Классические метрики</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="border-l-4 border-blue-500 pl-4">
-                  <h4 className="font-semibold">Double ML (DML)</h4>
-                  <p className="text-sm text-gray-600">Ортогонализация оценок через cross-fitting</p>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Uplift@k</h4>
+                  <p className="text-sm mb-2">Суммарный uplift для топ-k% объектов</p>
+                  <code className="text-xs bg-white p-2 rounded block">
+                    Σ(Y_treated - Y_control) для топ-k%
+                  </code>
                 </div>
-                <div className="border-l-4 border-green-500 pl-4">
-                  <h4 className="font-semibold">Causal Forests</h4>
-                  <p className="text-sm text-gray-600">Дерево решений для гетерогенных эффектов</p>
+                
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">AUUC</h4>
+                  <p className="text-sm mb-2">Area Under Uplift Curve</p>
+                  <code className="text-xs bg-white p-2 rounded block">
+                    ∫ uplift_curve dx
+                  </code>
                 </div>
-                <div className="border-l-4 border-purple-500 pl-4">
-                  <h4 className="font-semibold">X-learner</h4>
-                  <p className="text-sm text-gray-600">Улучшенная версия meta-learners</p>
+                
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Qini коэффициент</h4>
+                  <p className="text-sm mb-2">Площадь под Qini кривой</p>
+                  <code className="text-xs bg-white p-2 rounded block">
+                    Qini = AUUC / max_possible_AUUC
+                  </code>
                 </div>
               </div>
             </CardContent>
@@ -296,21 +486,32 @@ const slides = [
           
           <Card>
             <CardHeader>
-              <CardTitle>Техники валидации</CardTitle>
+              <CardTitle>Проблемы в регрессии</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="bg-yellow-50 p-3 rounded-lg">
-                  <h4 className="font-semibold">Synthetic data</h4>
-                  <p className="text-sm">Генерация данных с известным τ(X)</p>
+                <div className="bg-red-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-red-700 mb-2">Отсутствие нормировки</h4>
+                  <p className="text-sm">Метрики зависят от абсолютных значений таргета</p>
+                  <div className="text-xs text-gray-600 mt-2">
+                    Пример: uplift@10% = 1000₽ vs 100₽ - какой лучше?
+                  </div>
                 </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <h4 className="font-semibold">Cross-validation</h4>
-                  <p className="text-sm">Специальные схемы для causal inference</p>
+                
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-orange-700 mb-2">Сравнимость датасетов</h4>
+                  <p className="text-sm">Невозможно сравнить модели на разных данных</p>
+                  <div className="text-xs text-gray-600 mt-2">
+                    B2B vs B2C: разные масштабы покупок
+                  </div>
                 </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <h4 className="font-semibold">A/B testing</h4>
-                  <p className="text-sm">Контролируемые эксперименты</p>
+                
+                <div className="bg-yellow-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-yellow-700 mb-2">Влияние выбросов</h4>
+                  <p className="text-sm">Экстремальные значения сильно искажают метрики</p>
+                  <div className="text-xs text-gray-600 mt-2">
+                    Один клиент с uplift 10000₽ >> 100 клиентов с uplift 50₽
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -319,57 +520,94 @@ const slides = [
         
         <Card>
           <CardHeader>
-            <CardTitle>Практические рекомендации</CardTitle>
+            <CardTitle>Предлагаемые решения</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold mb-3 text-green-700">✓ Лучшие практики:</h4>
-                <ul className="space-y-2 text-sm">
-                  <li>• Использование propensity score для взвешивания</li>
-                  <li>• Проверка предположений (CIA, overlap)</li>
-                  <li>• Ensemble методы для робустности</li>
-                  <li>• Регуляризация для предотвращения overfitting</li>
-                </ul>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-700 mb-2">Относительные метрики</h4>
+                <code className="text-xs bg-white p-1 rounded block mb-2">
+                  Relative_Uplift@k = Uplift@k / Baseline_Revenue
+                </code>
+                <p className="text-xs text-gray-600">Нормировка на базовый доход</p>
               </div>
-              <div>
-                <h4 className="font-semibold mb-3 text-red-700">✗ Частые ошибки:</h4>
-                <ul className="space-y-2 text-sm">
-                  <li>• Игнорирование selection bias</li>
-                  <li>• Использование стандартных ML метрик</li>
-                  <li>• Недостаточная проверка assumptions</li>
-                  <li>• Переоценка статистической значимости</li>
-                </ul>
+              
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-700 mb-2">Процентные метрики</h4>
+                <code className="text-xs bg-white p-1 rounded block mb-2">
+                  Uplift_Rate@k = (Treated_k - Control_k) / Control_k
+                </code>
+                <p className="text-xs text-gray-600">Процентное увеличение</p>
+              </div>
+              
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-purple-700 mb-2">Робастные метрики</h4>
+                <code className="text-xs bg-white p-1 rounded block mb-2">
+                  Median_Uplift@k, IQR_Uplift@k
+                </code>
+                <p className="text-xs text-gray-600">Устойчивые к выбросам</p>
               </div>
             </div>
           </CardContent>
         </Card>
+        
+        <div className="bg-gray-50 p-6 rounded-lg">
+          <h3 className="font-semibold mb-4">Пример сравнения метрик:</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-2">Датасет</th>
+                  <th className="text-left p-2">Uplift@10%</th>
+                  <th className="text-left p-2">Relative Uplift@10%</th>
+                  <th className="text-left p-2">Интерпретация</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="p-2">E-commerce</td>
+                  <td className="p-2">5000₽</td>
+                  <td className="p-2">25%</td>
+                  <td className="p-2 text-green-600">Хорошо</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-2">B2B</td>
+                  <td className="p-2">50000₽</td>
+                  <td className="p-2">10%</td>
+                  <td className="p-2 text-orange-600">Средне</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     )
   },
   {
-    id: 6,
-    title: "Заключение",
-    subtitle: "Ключевые выводы и направления развития",
+    id: 7,
+    title: "Заключение и рекомендации",
+    subtitle: "Ключевые выводы для практического применения",
     content: (
       <div className="space-y-8">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl">
-          <h3 className="text-2xl font-bold mb-4 text-center">Основные вызовы Uplift в регрессии</h3>
+          <h3 className="text-2xl font-bold mb-4 text-center">Регрессионный Uplift: Итоги</h3>
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold mb-2">Теоретические:</h4>
-              <ul className="text-sm space-y-1">
-                <li>• Fundamental problem of causal inference</li>
-                <li>• Необходимость сильных предположений</li>
-                <li>• Сложность оценки индивидуальных эффектов</li>
+              <h4 className="font-semibold mb-3">Ключевые отличия:</h4>
+              <ul className="text-sm space-y-2">
+                <li>• Вещественный таргет вместо бинарного</li>
+                <li>• Отсутствие рандомизации</li>
+                <li>• Метрики без нормировки</li>
+                <li>• Больше влияние выбросов</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-2">Практические:</h4>
-              <ul className="text-sm space-y-1">
-                <li>• Отсутствие ground truth для валидации</li>
-                <li>• Чувствительность к выбросам</li>
-                <li>• Необходимость домен-экспертизы</li>
+              <h4 className="font-semibold mb-3">X-learner как решение:</h4>
+              <ul className="text-sm space-y-2">
+                <li>• 4-этапный алгоритм</li>
+                <li>• Использует всю информацию</li>
+                <li>• Робастен к дисбалансу</li>
+                <li>• Эффективен для регрессии</li>
               </ul>
             </div>
           </div>
@@ -378,51 +616,85 @@ const slides = [
         <div className="grid grid-cols-3 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg text-blue-600">Исследования</CardTitle>
+              <CardTitle className="text-lg text-green-600">Практические советы</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="text-sm space-y-2">
-                <li>• Neural causal models</li>
-                <li>• Bayesian approaches</li>
-                <li>• Deep learning для ITE</li>
-                <li>• Multi-task learning</li>
+                <li>• Используйте X-learner для регрессионных задач</li>
+                <li>• Экспериментируйте с весовыми функциями</li>
+                <li>• Применяйте cross-validation осторожно</li>
+                <li>• Проверяйте предположения модели</li>
+                <li>• Используйте ансамбли моделей</li>
               </ul>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg text-green-600">Инструменты</CardTitle>
+              <CardTitle className="text-lg text-blue-600">Метрики</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="text-sm space-y-2">
-                <li>• CausalML (Uber)</li>
-                <li>• EconML (Microsoft)</li>
-                <li>• DoWhy (Microsoft)</li>
-                <li>• scikit-uplift</li>
+                <li>• Разрабатывайте относительные метрики</li>
+                <li>• Используйте робастные оценки</li>
+                <li>• Учитывайте бизнес-контекст</li>
+                <li>• Валидируйте на A/B тестах</li>
+                <li>• Мониторьте производительность</li>
               </ul>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg text-purple-600">Применения</CardTitle>
+              <CardTitle className="text-lg text-purple-600">Будущие направления</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="text-sm space-y-2">
-                <li>• Персонализация маркетинга</li>
-                <li>• Медицина (treatment effects)</li>
-                <li>• Экономика (policy evaluation)</li>
-                <li>• Оптимизация продуктов</li>
+                <li>• Deep learning для uplift</li>
+                <li>• Bayesian подходы</li>
+                <li>• Causal discovery</li>
+                <li>• Multi-treatment scenarios</li>
+                <li>• Real-time uplift scoring</li>
               </ul>
             </CardContent>
           </Card>
         </div>
         
-        <div className="text-center bg-gray-50 p-6 rounded-lg">
+        <div className="bg-gray-50 p-6 rounded-lg">
+          <h3 className="font-semibold mb-4 text-center">Алгоритм внедрения X-learner в продакшн:</h3>
+          <div className="grid grid-cols-5 gap-4">
+            <div className="text-center">
+              <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
+              <div className="text-xs">Подготовка данных и EDA</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-400 self-center" />
+            <div className="text-center">
+              <div className="bg-green-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
+              <div className="text-xs">Обучение 4 моделей X-learner</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-400 self-center" />
+            <div className="text-center">
+              <div className="bg-purple-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
+              <div className="text-xs">Валидация на hold-out</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-400 self-center" />
+            <div className="text-center">
+              <div className="bg-orange-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2 text-sm font-bold">4</div>
+              <div className="text-xs">A/B тест стратегии</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-400 self-center" />
+            <div className="text-center">
+              <div className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2 text-sm font-bold">5</div>
+              <div className="text-xs">Мониторинг и дообучение</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="text-center bg-blue-50 p-6 rounded-lg">
           <p className="text-lg text-gray-700">
-            <strong>Uplift modeling</strong> - активно развивающаяся область на стыке ML и causal inference, 
-            требующая глубокого понимания как статистических, так и предметных аспектов задачи.
+            <strong>Регрессионный uplift modeling</strong> требует адаптации классических подходов. 
+            X-learner предоставляет эффективное решение, но успех зависит от качества данных, 
+            правильного выбора метрик и тщательной валидации.
           </p>
         </div>
       </div>
@@ -453,7 +725,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-gray-800">Uplift Modeling: Regression Problems</h1>
-              <p className="text-sm text-gray-600">Машинное обучение и каузальный вывод</p>
+              <p className="text-sm text-gray-600">X-learner и специфика регрессионных задач</p>
             </div>
             <div className="text-sm text-gray-500">
               {currentSlide + 1} / {slides.length}
