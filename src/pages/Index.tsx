@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, AlertTriangle, Zap, ArrowRight } from 'lucide-react';
@@ -65,7 +64,7 @@ const Index = () => {
             <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
               <div className="flex items-center mb-3">
                 <AlertTriangle className="w-6 h-6 text-orange-500 mr-2" />
-                <h3 className="font-bold text-orange-700">2. Семплирование контрольной группы (T=1)</h3>
+                <h3 className="font-bold text-orange-700">2. Семплирование контрольной группы (T=0)</h3>
               </div>
               <p className="text-orange-700">При создании синтетической контрольной группы модель может переобучиться на особенностях данных</p>
             </div>
@@ -83,13 +82,13 @@ const Index = () => {
             <h3 className="font-semibold mb-4">Структура данных в регрессионном uplift:</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white p-4 rounded border">
-                <h4 className="font-medium text-blue-600 mb-2">Тестовая группа</h4>
-                <code className="text-sm">X_data_test, Y_test (T=0)</code>
+                <h4 className="font-medium text-blue-600 mb-2">Контрольная группа</h4>
+                <code className="text-sm">X_data_control, Y_control (T=0)</code>
                 <p className="text-xs text-gray-600 mt-1">Без воздействия</p>
               </div>
               <div className="bg-white p-4 rounded border">
-                <h4 className="font-medium text-green-600 mb-2">Контрольная группа</h4>
-                <code className="text-sm">X_data_control, Y_control (T=1)</code>
+                <h4 className="font-medium text-green-600 mb-2">Тестовая группа</h4>
+                <code className="text-sm">X_data_test, Y_test (T=1)</code>
                 <p className="text-xs text-gray-600 mt-1">Получили воздействие</p>
               </div>
             </div>
@@ -114,16 +113,16 @@ const Index = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">MODEL1 (Тестовая)</h4>
+                    <h4 className="font-semibold mb-2">MODEL1 (Контрольная)</h4>
                     <code className="text-sm bg-white p-2 rounded block">
-                      X_data_test(T=0) → MODEL1 → Y_test
+                      X_data_control(T=0) → MODEL1 → Y_control
                     </code>
                     <p className="text-xs text-gray-600 mt-2">Предсказывает результат без воздействия</p>
                   </div>
                   <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">MODEL2 (Контрольная)</h4>
+                    <h4 className="font-semibold mb-2">MODEL2 (Тестовая)</h4>
                     <code className="text-sm bg-white p-2 rounded block">
-                      X_data_control(T=1) → MODEL2 → Y_control
+                      X_data_test(T=1) → MODEL2 → Y_test
                     </code>
                     <p className="text-xs text-gray-600 mt-2">Предсказывает результат с воздействием</p>
                   </div>
@@ -143,16 +142,16 @@ const Index = () => {
                   <div className="bg-orange-50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-2">Delta1 (для тестовой группы)</h4>
                     <code className="text-sm bg-white p-2 rounded block">
-                      delta1 = MODEL2.predict(X_data_test) - Y_test
+                      delta1 = Y_test - MODEL1.predict(X_data_test)
                     </code>
-                    <p className="text-xs text-gray-600 mt-2">Разность между контрфактом и фактом</p>
+                    <p className="text-xs text-gray-600 mt-2">Разность между фактом и контрфактом</p>
                   </div>
                   <div className="bg-purple-50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-2">Delta0 (для контрольной группы)</h4>
                     <code className="text-sm bg-white p-2 rounded block">
-                      delta0 = Y_control - MODEL1.predict(X_data_control)
+                      delta0 = MODEL2.predict(X_data_control) - Y_control
                     </code>
-                    <p className="text-xs text-gray-600 mt-2">Разность между фактом и контрфактом</p>
+                    <p className="text-xs text-gray-600 mt-2">Разность между контрфактом и фактом</p>
                   </div>
                 </div>
               </CardContent>
@@ -223,11 +222,11 @@ const Index = () => {
                 <div className="space-y-3">
                   <div className="bg-blue-50 p-3 rounded">
                     <code>μ₀(x) = E[Y(0)|X=x]</code>
-                    <div className="text-xs text-gray-600 mt-1">MODEL1 на тестовой группе</div>
+                    <div className="text-xs text-gray-600 mt-1">MODEL1 на контрольной группе</div>
                   </div>
                   <div className="bg-green-50 p-3 rounded">
                     <code>μ₁(x) = E[Y(1)|X=x]</code>
-                    <div className="text-xs text-gray-600 mt-1">MODEL2 на контрольной группе</div>
+                    <div className="text-xs text-gray-600 mt-1">MODEL2 на тестовой группе</div>
                   </div>
                 </div>
               </CardContent>
@@ -240,12 +239,12 @@ const Index = () => {
               <CardContent>
                 <div className="space-y-3">
                   <div className="bg-orange-50 p-3 rounded">
-                    <code>D₁ᵢ = μ̂₁(Xᵢ) - Yᵢ</code>
-                    <div className="text-xs text-gray-600 mt-1">для тестовой группы (T=0)</div>
+                    <code>D₁ᵢ = Yᵢ - μ̂₀(Xᵢ)</code>
+                    <div className="text-xs text-gray-600 mt-1">для тестовой группы (T=1)</div>
                   </div>
                   <div className="bg-purple-50 p-3 rounded">
-                    <code>D₀ᵢ = Yᵢ - μ̂₀(Xᵢ)</code>
-                    <div className="text-xs text-gray-600 mt-1">для контрольной группы (T=1)</div>
+                    <code>D₀ᵢ = μ̂₁(Xᵢ) - Yᵢ</code>
+                    <div className="text-xs text-gray-600 mt-1">для контрольной группы (T=0)</div>
                   </div>
                 </div>
               </CardContent>
